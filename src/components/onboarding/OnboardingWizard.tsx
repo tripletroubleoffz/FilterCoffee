@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/lib/supabaseClient';
-import { Upload, Check, User, Coffee, ArrowRight } from 'lucide-react';
+import { Upload, Check, User, Coffee, ArrowRight, X } from 'lucide-react';
 import Image from 'next/image';
 
 const availableTopics = [
@@ -22,6 +22,7 @@ export function OnboardingWizard() {
   const { user, profile, refreshProfile } = useApp();
   const [step, setStep] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState('');
 
   // Step 1 Form Data
   const [nickname, setNickname] = useState('');
@@ -93,16 +94,35 @@ export function OnboardingWizard() {
   };
 
   const handleTopicToggle = (topic: string) => {
-    setSelectedTopics((prev) =>
-      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
-    );
+    const limit = profile?.subscription_status === 'PRO' ? 10 : 3;
+    setSelectedTopics((prev) => {
+      const isSelected = prev.includes(topic);
+      if (isSelected) {
+        setError('');
+        return prev.filter((t) => t !== topic);
+      } else {
+        if (prev.length >= limit) {
+          setError(`You have reached the limit of ${limit} topics for the ${profile?.subscription_status || 'FREE'} plan. Upgrade to PRO to choose up to 10.`);
+          return prev;
+        }
+        setError('');
+        return [...prev, topic];
+      }
+    });
   };
 
   const handleAddCustomTopic = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && customTopic.trim()) {
       e.preventDefault();
-      if (!selectedTopics.includes(customTopic.trim())) {
-        setSelectedTopics((prev) => [...prev, customTopic.trim()]);
+      const topic = customTopic.trim();
+      const limit = profile?.subscription_status === 'PRO' ? 10 : 3;
+      if (!selectedTopics.includes(topic)) {
+        if (selectedTopics.length >= limit) {
+          setError(`You have reached the limit of ${limit} topics for the ${profile?.subscription_status || 'FREE'} plan. Upgrade to PRO to choose up to 10.`);
+          return;
+        }
+        setSelectedTopics((prev) => [...prev, topic]);
+        setError('');
       }
       setCustomTopic('');
     }
@@ -110,8 +130,15 @@ export function OnboardingWizard() {
 
   const handleAddCustomTopicBtn = () => {
     if (customTopic.trim()) {
-      if (!selectedTopics.includes(customTopic.trim())) {
-        setSelectedTopics((prev) => [...prev, customTopic.trim()]);
+      const topic = customTopic.trim();
+      const limit = profile?.subscription_status === 'PRO' ? 10 : 3;
+      if (!selectedTopics.includes(topic)) {
+        if (selectedTopics.length >= limit) {
+          setError(`You have reached the limit of ${limit} topics for the ${profile?.subscription_status || 'FREE'} plan. Upgrade to PRO to choose up to 10.`);
+          return;
+        }
+        setSelectedTopics((prev) => [...prev, topic]);
+        setError('');
       }
       setCustomTopic('');
     }
@@ -314,21 +341,34 @@ export function OnboardingWizard() {
             </p>
           </div>
 
+          {error && (
+            <div className="p-3 rounded-md border border-red-500/20 bg-red-500/5 text-red-500 text-xs flex items-center gap-2">
+              <span>{error}</span>
+            </div>
+          )}
+
           {/* Topics Chips */}
           <div className="flex flex-wrap gap-2">
-            {availableTopics.map((topic) => {
+            {[
+              ...availableTopics,
+              ...selectedTopics.filter((topic) => !availableTopics.includes(topic))
+            ].map((topic) => {
               const active = selectedTopics.includes(topic);
+              const isCustom = !availableTopics.includes(topic);
               return (
                 <button
                   key={topic}
                   onClick={() => handleTopicToggle(topic)}
-                  className={`text-xs font-medium px-3.5 py-1.5 rounded-full border transition-all ${
+                  className={`text-xs font-medium px-3.5 py-1.5 rounded-full border transition-all inline-flex items-center gap-1.5 ${
                     active
                       ? 'bg-foreground text-background border-foreground font-semibold'
                       : 'bg-background text-muted-foreground border-border hover:border-foreground'
                   }`}
                 >
-                  {topic}
+                  <span>{topic}</span>
+                  {isCustom && active && (
+                    <X className="w-3.5 h-3.5 flex-shrink-0 opacity-70 hover:opacity-100" />
+                  )}
                 </button>
               );
             })}

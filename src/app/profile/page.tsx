@@ -130,15 +130,34 @@ export default function ProfilePage() {
   };
 
   const handleTopicToggle = (topic: string) => {
-    setPreferredTopics((prev) =>
-      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
-    );
+    const limit = profile?.subscription_status === 'PRO' ? 10 : 3;
+    setPreferredTopics((prev) => {
+      const isSelected = prev.includes(topic);
+      if (isSelected) {
+        setError('');
+        return prev.filter((t) => t !== topic);
+      } else {
+        if (prev.length >= limit) {
+          setError(`You have reached the limit of ${limit} topics for the ${profile?.subscription_status || 'FREE'} plan. Upgrade to PRO to choose up to 10.`);
+          return prev;
+        }
+        setError('');
+        return [...prev, topic];
+      }
+    });
   };
 
   const handleAddTopic = () => {
     if (newTopic.trim()) {
-      if (!preferredTopics.includes(newTopic.trim())) {
-        setPreferredTopics((prev) => [...prev, newTopic.trim()]);
+      const topic = newTopic.trim();
+      const limit = profile?.subscription_status === 'PRO' ? 10 : 3;
+      if (!preferredTopics.includes(topic)) {
+        if (preferredTopics.length >= limit) {
+          setError(`You have reached the limit of ${limit} topics for the ${profile?.subscription_status || 'FREE'} plan. Upgrade to PRO to choose up to 10.`);
+          return;
+        }
+        setPreferredTopics((prev) => [...prev, topic]);
+        setError('');
       }
       setNewTopic('');
     }
@@ -149,17 +168,18 @@ export default function ProfilePage() {
     setDeleting(true);
 
     try {
-      // 1. Delete user profile row in database (will cascade delete bookmarks etc.)
-      await supabase.from('profiles').delete().eq('id', user.id);
+      // 1. Call RPC function to delete the user account from auth.users (cascades to profile)
+      const { error: deleteError } = await supabase.rpc('delete_user_account');
+      if (deleteError) throw deleteError;
       
       // 2. Sign out
       await logout();
 
       setDeleteModalOpen(false);
       router.push('/login');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error deleting account:', err);
-      setError('Could not delete account. Please log out instead.');
+      setError(err.message || 'Could not delete account. Please log out instead.');
     } finally {
       setDeleting(false);
     }
@@ -337,20 +357,27 @@ export default function ProfilePage() {
             <div className="flex flex-col gap-3">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Preferred Topics</span>
               <div className="flex flex-wrap gap-2">
-                {availableTopics.map((topic) => {
+                {[
+                  ...availableTopics,
+                  ...preferredTopics.filter((topic) => !availableTopics.includes(topic))
+                ].map((topic) => {
                   const active = preferredTopics.includes(topic);
+                  const isCustom = !availableTopics.includes(topic);
                   return (
                     <button
                       key={topic}
                       type="button"
                       onClick={() => handleTopicToggle(topic)}
-                      className={`text-xs font-medium px-3.5 py-1.5 rounded-full border transition-colors ${
+                      className={`text-xs font-medium px-3.5 py-1.5 rounded-full border transition-colors inline-flex items-center gap-1.5 ${
                         active
                           ? 'border-foreground bg-foreground text-background font-semibold'
                           : 'border-border bg-background hover:bg-card-hover text-muted-foreground'
                       }`}
                     >
-                      {topic}
+                      <span>{topic}</span>
+                      {isCustom && active && (
+                        <X className="w-3.5 h-3.5 flex-shrink-0 opacity-70 hover:opacity-100" />
+                      )}
                     </button>
                   );
                 })}

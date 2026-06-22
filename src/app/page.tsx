@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -58,6 +59,82 @@ const liveUpdates = [
 ];
 
 export default function LandingPage() {
+  const [updates, setUpdates] = useState(liveUpdates);
+
+  useEffect(() => {
+    const loadLiveUpdates = async () => {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      const oneWeekAgoStr = oneWeekAgo.toISOString();
+
+      const getTrending = async (dbCategories: string[]) => {
+        try {
+          // 1. Try to get most liked / newest article from last 7 days
+          let { data, error } = await supabase
+            .from('articles')
+            .select('category, headline, summary')
+            .in('category', dbCategories)
+            .gte('created_at', oneWeekAgoStr)
+            .order('likes_count', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+          if (error) throw error;
+
+          if (data && data.length > 0) {
+            return data[0];
+          }
+
+          // 2. Fallback to latest overall if none in the last 7 days
+          const { data: fallback, error: fallbackError } = await supabase
+            .from('articles')
+            .select('category, headline, summary')
+            .in('category', dbCategories)
+            .order('likes_count', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+          if (fallbackError) throw fallbackError;
+
+          if (fallback && fallback.length > 0) {
+            return fallback[0];
+          }
+        } catch (err) {
+          console.error('Error fetching trending for', dbCategories, err);
+        }
+        return null;
+      };
+
+      const domains = [
+        { key: 'AI', dbCats: ['AI', 'Model Wars'] },
+        { key: 'FINANCE', dbCats: ['Finance', 'Startup Funding'] },
+        { key: 'RESEARCH', dbCats: ['Research', 'Technology', 'Engineering'] },
+        { key: 'MARKET', dbCats: ['SaaS', 'AI Marketplace', 'Startups'] },
+        { key: 'CAREERS', dbCats: ['Careers', 'Career Radar'] }
+      ];
+
+      const newUpdates = await Promise.all(
+        domains.map(async (dom, idx) => {
+          const trendingArticle = await getTrending(dom.dbCats);
+          if (trendingArticle) {
+            return {
+              category: dom.key,
+              badgeClass: liveUpdates[idx].badgeClass,
+              headline: trendingArticle.headline,
+              summary: trendingArticle.summary
+            };
+          }
+          // Return default fallback if nothing in DB
+          return liveUpdates[idx];
+        })
+      );
+
+      setUpdates(newUpdates);
+    };
+
+    loadLiveUpdates();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
@@ -435,13 +512,13 @@ export default function LandingPage() {
               </span>
             </div>
             <span className="text-[10px] font-medium text-muted font-mono">
-              Interval: 1 min
+              Interval: 1 week
             </span>
           </div>
 
           {/* List items */}
           <div className="flex flex-col gap-6">
-            {liveUpdates.map((update, idx) => (
+            {updates.map((update, idx) => (
               <div key={idx} className="flex gap-4 items-start border-b border-border/40 pb-5 last:border-b-0 last:pb-0">
                 <div className={`px-2 py-0.5 rounded border text-[9px] font-black uppercase tracking-wider ${update.badgeClass} flex-shrink-0 min-w-[75px] text-center`}>
                   {update.category}
