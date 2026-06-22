@@ -35,7 +35,7 @@ function DeveloperPageContent() {
   // Check authorization
   useEffect(() => {
     if (!appLoading) {
-      const isDeveloper = profile?.email === 'mukilan258@gmail.com' || roleParam === 'developer';
+      const isDeveloper = profile?.is_developer === true || roleParam === 'developer';
       setAuthorized(isDeveloper);
     }
   }, [profile, roleParam, appLoading]);

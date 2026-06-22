@@ -90,7 +90,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       const searchParams = new URLSearchParams(window.location.search);
       const roleParam = searchParams.get('role');
       setIsAdmin(profile?.email === 'tripletrouble.offz@gmail.com' || roleParam === 'admin');
-      setIsDeveloper(profile?.email === 'mukilan258@gmail.com' || roleParam === 'developer');
+      setIsDeveloper(profile?.is_developer === true || roleParam === 'developer');
     }
   }, [profile]);
 

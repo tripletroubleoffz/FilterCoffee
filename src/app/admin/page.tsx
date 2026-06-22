@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/lib/supabaseClient';
-import { Shield, Users, Server, Activity, ArrowLeft, Plus, Trash2, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
+import { Shield, Users, Server, Activity, ArrowLeft, Plus, Trash2, RefreshCw, CheckCircle, AlertCircle, Terminal, UserPlus, UserMinus } from 'lucide-react';
 
 interface RssSource {
   id: string;
@@ -63,6 +63,20 @@ function AdminPageContent() {
   // Syncing State
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<{ status: string; imported: number; error: string | null } | null>(null);
+
+  // Developer Management States
+  interface DeveloperProfile {
+    id: string;
+    nickname: string;
+    email: string;
+    is_developer: boolean;
+  }
+  const [developers, setDevelopers] = useState<DeveloperProfile[]>([]);
+  const [loadingDevs, setLoadingDevs] = useState(true);
+  const [devEmail, setDevEmail] = useState('');
+  const [devError, setDevError] = useState('');
+  const [devSuccess, setDevSuccess] = useState('');
+  const [addingDev, setAddingDev] = useState(false);
 
   // Check authorization
   useEffect(() => {
@@ -203,12 +217,97 @@ function AdminPageContent() {
     }
   };
 
+  const fetchDevelopers = async () => {
+    setLoadingDevs(true);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, nickname, email, is_developer')
+        .eq('is_developer', true)
+        .order('nickname', { ascending: true });
+
+      if (error) throw error;
+      setDevelopers((data as DeveloperProfile[]) || []);
+    } catch (err) {
+      console.error('Failed to load developers:', err);
+    } finally {
+      setLoadingDevs(false);
+    }
+  };
+
+  const handlePromoteDeveloper = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDevError('');
+    setDevSuccess('');
+
+    const targetEmail = devEmail.trim().toLowerCase();
+    if (!targetEmail) {
+      setDevError('Please enter a valid email address.');
+      return;
+    }
+
+    if (targetEmail === 'tripletrouble.offz@gmail.com') {
+      setDevError('The admin email cannot be promoted to developer.');
+      return;
+    }
+
+    setAddingDev(true);
+    try {
+      // Find profile by email
+      const { data, error: fetchError } = await supabase
+        .from('profiles')
+        .select('id, email')
+        .eq('email', targetEmail)
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+      if (!data) {
+        setDevError('User profile not found with this email. Users must sign up first.');
+        return;
+      }
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ is_developer: true })
+        .eq('id', data.id);
+
+      if (updateError) throw updateError;
+
+      setDevSuccess(`User ${devEmail.trim()} successfully promoted to developer.`);
+      setDevEmail('');
+      fetchDevelopers();
+    } catch (err: any) {
+      console.error('Failed to promote user:', err);
+      setDevError(err.message || 'Failed to promote user.');
+    } finally {
+      setAddingDev(false);
+    }
+  };
+
+  const handleDemoteDeveloper = async (userId: string, email: string) => {
+    if (!confirm(`Are you sure you want to remove developer permissions from ${email}?`)) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_developer: false })
+        .eq('id', userId);
+
+      if (error) throw error;
+      fetchDevelopers();
+    } catch (err: any) {
+      console.error('Failed to demote developer:', err);
+      alert('Failed to demote developer: ' + err.message);
+    }
+  };
+
   useEffect(() => {
     if (authorized) {
       fetchAdminStats();
       fetchRssSources();
       fetchRssLogs();
       fetchPendingRequests();
+      fetchDevelopers();
     }
   }, [authorized]);
 
@@ -436,6 +535,113 @@ function AdminPageContent() {
                 ) : (
                   <tr>
                     <td colSpan={4} className="p-4 text-center italic text-muted">No pending PRO upgrade requests.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Developer Roles Management */}
+        <div className="p-6 rounded-lg border border-border bg-card flex flex-col gap-4">
+          <h3 className="font-bold text-base uppercase tracking-wider border-b border-border pb-2 flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <Terminal className="w-4.5 h-4.5" />
+              Developer Roles Management
+            </span>
+            <button
+              onClick={fetchDevelopers}
+              disabled={loadingDevs}
+              className="p-1 rounded border border-border hover:bg-card-hover text-muted hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+              title="Refresh developers list"
+              aria-label="Refresh developers list"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loadingDevs ? 'animate-spin' : ''}`} />
+            </button>
+          </h3>
+
+          {/* Add Developer Form */}
+          <form onSubmit={handlePromoteDeveloper} className="grid grid-cols-1 sm:grid-cols-4 gap-4 p-4 border border-border rounded-lg bg-background items-end">
+            <div className="flex flex-col gap-1.5 sm:col-span-3">
+              <label htmlFor="dev-email-input" className="text-[10px] uppercase font-bold text-muted">Promote User to Developer (Email)</label>
+              <input
+                id="dev-email-input"
+                type="email"
+                required
+                placeholder="e.g. developer@filtercoffee.ai"
+                value={devEmail}
+                onChange={(e) => setDevEmail(e.target.value)}
+                className="h-9 px-2.5 rounded border border-border bg-card text-xs focus:outline-none"
+              />
+            </div>
+            <div>
+              <button
+                type="submit"
+                disabled={addingDev}
+                className="w-full h-9 border border-foreground bg-foreground text-background rounded flex items-center justify-center hover:opacity-90 disabled:opacity-50 transition-opacity gap-1.5 text-xs font-bold"
+                title="Add Developer"
+                aria-label="Add Developer"
+              >
+                <UserPlus className="w-4 h-4" /> Add Developer
+              </button>
+            </div>
+          </form>
+
+          {devError && (
+            <div className="p-3 rounded-md border border-red-500/20 bg-red-500/5 text-red-500 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" />
+              <span>{devError}</span>
+            </div>
+          )}
+
+          {devSuccess && (
+            <div className="p-3 rounded-md border border-green-500/20 bg-green-500/5 text-green-500 text-xs flex items-center gap-2">
+              <CheckCircle className="w-4 h-4" />
+              <span>{devSuccess}</span>
+            </div>
+          )}
+
+          {/* Current Developers List */}
+          <div className="overflow-x-auto border border-border rounded-lg bg-background">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-border bg-card">
+                  <th className="p-3 font-bold uppercase tracking-wider text-muted">Developer Nickname</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-muted">Email</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-muted">Permissions</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-muted text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border text-muted-foreground">
+                {loadingDevs ? (
+                  <tr>
+                    <td colSpan={4} className="p-4 text-center italic text-muted animate-pulse">Loading developers list...</td>
+                  </tr>
+                ) : developers.length > 0 ? (
+                  developers.map((dev) => (
+                    <tr key={dev.id} className="hover:bg-card-hover transition-colors">
+                      <td className="p-3 font-bold text-foreground">{dev.nickname || 'Anonymous'}</td>
+                      <td className="p-3 font-mono">{dev.email}</td>
+                      <td className="p-3">
+                        <span className="px-2.5 py-0.5 rounded-full font-bold bg-green-500/10 text-green-600 dark:text-green-400 text-[10px] uppercase font-mono tracking-wider">
+                          Developer Mode
+                        </span>
+                      </td>
+                      <td className="p-3 text-right">
+                        <button
+                          onClick={() => handleDemoteDeveloper(dev.id, dev.email)}
+                          className="p-1 rounded text-red-500 hover:bg-red-500/10 transition-colors focus:outline-none cursor-pointer"
+                          title="Demote Developer"
+                          aria-label={`Demote ${dev.email}`}
+                        >
+                          <UserMinus className="w-4.5 h-4.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="p-4 text-center italic text-muted">No developers configured.</td>
                   </tr>
                 )}
               </tbody>

@@ -17,6 +17,7 @@ export interface Profile {
   subscription_status: 'FREE' | 'PRO';
   preferred_topics: string[];
   pro_request_status?: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED' | null;
+  is_developer?: boolean | null;
 }
 
 export interface Article {
