@@ -18,6 +18,7 @@ export interface Profile {
   preferred_topics: string[];
   pro_request_status?: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED' | null;
   is_developer?: boolean | null;
+  is_admin?: boolean | null;
 }
 
 export interface Article {

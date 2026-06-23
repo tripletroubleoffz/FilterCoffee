@@ -81,7 +81,7 @@ function AdminPageContent() {
   // Check authorization
   useEffect(() => {
     if (!appLoading) {
-      const isAdmin = profile?.email === 'tripletrouble.offz@gmail.com' || roleParam === 'admin';
+      const isAdmin = profile?.is_admin === true || roleParam === 'admin';
       setAuthorized(isAdmin);
     }
   }, [profile, roleParam, appLoading]);
@@ -246,23 +246,23 @@ function AdminPageContent() {
       return;
     }
 
-    if (targetEmail === 'tripletrouble.offz@gmail.com') {
-      setDevError('The admin email cannot be promoted to developer.');
-      return;
-    }
-
     setAddingDev(true);
     try {
       // Find profile by email
       const { data, error: fetchError } = await supabase
         .from('profiles')
-        .select('id, email')
+        .select('id, email, is_admin')
         .eq('email', targetEmail)
         .maybeSingle();
 
       if (fetchError) throw fetchError;
       if (!data) {
         setDevError('User profile not found with this email. Users must sign up first.');
+        return;
+      }
+
+      if (data.is_admin) {
+        setDevError('An admin account cannot be promoted to developer.');
         return;
       }
 

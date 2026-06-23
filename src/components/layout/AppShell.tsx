@@ -89,7 +89,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search);
       const roleParam = searchParams.get('role');
-      setIsAdmin(profile?.email === 'tripletrouble.offz@gmail.com' || roleParam === 'admin');
+      setIsAdmin(profile?.is_admin === true || roleParam === 'admin');
       setIsDeveloper(profile?.is_developer === true || roleParam === 'developer');
     }
   }, [profile]);

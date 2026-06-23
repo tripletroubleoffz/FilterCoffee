@@ -168,8 +168,8 @@ export default function ProfilePage() {
     setDeleting(true);
 
     try {
-      // 1. Call RPC function to delete the user account from auth.users (cascades to profile)
-      const { error: deleteError } = await supabase.rpc('delete_user_account');
+      // 1. Delete user profile row in database (which fires the secure delete_user trigger in the DB)
+      const { error: deleteError } = await supabase.from('profiles').delete().eq('id', user.id);
       if (deleteError) throw deleteError;
       
       // 2. Sign out
