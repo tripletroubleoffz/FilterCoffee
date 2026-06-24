@@ -18,9 +18,9 @@ export function Header() {
             <Image
               src="/logo.png"
               alt="FilterCoffee Logo"
-              width={92}
+              width={85}
               height={40}
-              className="object-contain object-left dark:invert h-auto"
+              className="object-contain object-left h-auto"
               style={{ height: 'auto' }}
               priority
             />

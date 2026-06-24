@@ -29,13 +29,32 @@
 /* Default Theme is Dark Mode */
 :root:not(.light),
 .dark {
-  --background: #090504;
-  --foreground: #f5efe3;
-  --card: #120d0b;
-  --card-hover: #1c1512;
-  --border: #221916;
-  --muted: #9a8b84;
-  --muted-foreground: #d2c6bf;
+  --background: #0A0503;
+  --foreground: #F5EFE3;
+  --card: #130C09;
+  --card-hover: #1A110D;
+  --border: #231611;
+  --muted: #F2D0A4;
+  --muted-foreground: #A6958B;
+}
+
+/* Dark Mode Button & Outline Overrides */
+.dark .bg-foreground {
+  background-color: var(--muted) !important;
+  color: var(--background) !important;
+}
+.dark .border-foreground {
+  border-color: var(--muted) !important;
+}
+.dark .text-background {
+  color: var(--background) !important;
+}
+.dark a[href="#features"] {
+  border-color: var(--muted) !important;
+  color: var(--muted) !important;
+}
+.dark a[href="#features"]:hover {
+  background-color: var(--card-hover) !important;
 }
 
 /* Accessibility Focus States */

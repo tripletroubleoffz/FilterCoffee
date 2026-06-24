@@ -149,7 +149,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex h-screen w-screen items-center justify-center bg-background text-foreground">
         <div className="flex flex-col items-center gap-3">
           <div className="animate-spin">
-            <Image src="/logo.png" alt="Loading" width={80} height={35} className="object-contain dark:invert h-auto" style={{ height: 'auto' }} />
+            <Image src="/logo.png" alt="Loading" width={80} height={38} className="object-contain h-auto" style={{ height: 'auto' }} />
           </div>
           <span className="text-sm font-medium animate-pulse">Brewing FilterCoffee...</span>
         </div>
@@ -163,7 +163,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4 bg-background">
         <div className="w-full max-w-md p-6 rounded-lg border border-border bg-card text-center flex flex-col gap-6">
-          <Image src="/logo.png" alt="Logo" width={112} height={49} className="object-contain dark:invert mx-auto h-auto" style={{ height: 'auto' }} />
+          <Image src="/logo.png" alt="Logo" width={104} height={49} className="object-contain mx-auto h-auto" style={{ height: 'auto' }} />
           <div className="flex flex-col gap-2">
             <h2 className="text-xl font-bold">Authentication Required</h2>
             <p className="text-sm text-muted">
@@ -200,9 +200,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Image
               src="/logo.png"
               alt="FilterCoffee Logo"
-              width={92}
+              width={85}
               height={40}
-              className="object-contain object-left dark:invert h-auto"
+              className="object-contain object-left h-auto"
               style={{ height: 'auto' }}
               priority
             />
@@ -325,9 +325,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Image
                     src="/logo.png"
                     alt="FilterCoffee"
-                    width={92}
+                    width={85}
                     height={40}
-                    className="object-contain object-left dark:invert h-auto"
+                    className="object-contain object-left h-auto"
                     style={{ height: 'auto' }}
                   />
                 </Link>

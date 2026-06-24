@@ -30,31 +30,31 @@ const insights = [
 const liveUpdates = [
   {
     category: 'AI',
-    badgeClass: 'bg-[#FAF0E6] text-[#9E592B] border-[#F2E0D0] dark:bg-transparent dark:text-amber-400 dark:border-amber-400/20',
+    badgeClass: 'bg-[#FAF0E6] text-[#9E592B] border-[#F2E0D0] dark:bg-[#241812] dark:text-[#D48C55] dark:border-[#3D251A]',
     headline: 'OpenAI Launches GPT-5 Preview with Native Multi-Agent Orchestration',
     summary: 'Features native agent coordination allowing developers to define complex hierarchies directly in API calls. Impact: Shifts UI frameworks toward agentic state systems.',
   },
   {
     category: 'FINANCE',
-    badgeClass: 'bg-[#F0F5EE] text-[#4E7043] border-[#DCE8D5] dark:bg-transparent dark:text-emerald-400 dark:border-emerald-400/20',
+    badgeClass: 'bg-[#F0F5EE] text-[#4E7043] border-[#DCE8D5] dark:bg-[#182218] dark:text-[#5CA962] dark:border-[#253A26]',
     headline: 'Physical Intelligence Closes $400M Seed Round for Robot Control Software',
     summary: 'Bezos Expeditions and OpenAI back universal control models for physical movement. Valuation: $2.4B post-money.',
   },
   {
     category: 'RESEARCH',
-    badgeClass: 'bg-[#F2F4F7] text-[#556688] border-[#E2E6EC] dark:bg-transparent dark:text-slate-400 dark:border-slate-400/20',
+    badgeClass: 'bg-[#F2F4F7] text-[#556688] border-[#E2E6EC] dark:bg-[#1A202A] dark:text-[#7E96C2] dark:border-[#27354A]',
     headline: 'DeepMind Unveils AlphaFold 3: Modeling Protein-DNA Interactions',
     summary: "Predicts interactions of life's molecules (DNA, RNA, chemical compounds) in silico. Research: Speeds drug validation times by 80%.",
   },
   {
     category: 'MARKET',
-    badgeClass: 'bg-[#F5F2F9] text-[#7855A8] border-[#EAE3F2] dark:bg-transparent dark:text-purple-400 dark:border-purple-400/20',
+    badgeClass: 'bg-[#F5F2F9] text-[#7855A8] border-[#EAE3F2] dark:bg-[#201A2A] dark:text-[#9A7EC2] dark:border-[#33274A]',
     headline: 'Anthropic Launches Artifacts API for Collaborative Canvas Sharing',
     summary: 'Allows software providers to embed shared canvas visual frames directly into enterprise messaging channels, boosting team editing productivity.',
   },
   {
     category: 'CAREERS',
-    badgeClass: 'bg-[#F9F2F4] text-[#A85568] border-[#F2E3E7] dark:bg-transparent dark:text-rose-400 dark:border-rose-400/20',
+    badgeClass: 'bg-[#F9F2F4] text-[#A85568] border-[#F2E3E7] dark:bg-[#2A1A20] dark:text-[#C27E92] dark:border-[#4A2733]',
     headline: 'Rust and GPU Optimization Skills Surge in Global AI Talent Market',
     summary: 'Data indicates a 140% year-over-year increase in job postings seeking low-level system design experts, overtaking high-level API integrations.',
   },

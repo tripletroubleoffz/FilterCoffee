@@ -36,8 +36,8 @@ function AboutUsContent() {
             src="/logo.png"
             alt="FilterCoffee Logo"
             width={200}
-            height={87}
-            className="object-contain dark:invert h-auto"
+            height={94}
+            className="object-contain h-auto"
             style={{ height: 'auto' }}
             priority
           />

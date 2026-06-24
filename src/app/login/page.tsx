@@ -116,7 +116,7 @@ export default function LoginPage() {
           {/* Brand header */}
           <div className="flex flex-col items-center gap-2 text-center">
             <Link href="/" className="mb-2 focus:outline-none">
-              <Image src="/logo.png" alt="Logo" width={92} height={40} className="object-contain dark:invert h-auto" style={{ height: 'auto' }} priority />
+              <Image src="/logo.png" alt="Logo" width={85} height={40} className="object-contain h-auto" style={{ height: 'auto' }} priority />
             </Link>
             <h1 className="text-xl font-bold tracking-tight">Welcome Back</h1>
             <p className="text-xs text-muted leading-relaxed max-w-xs">
