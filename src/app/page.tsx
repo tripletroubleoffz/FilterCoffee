@@ -30,31 +30,31 @@ const insights = [
 const liveUpdates = [
   {
     category: 'AI',
-    badgeClass: 'text-amber-600 border-amber-600/30 dark:text-amber-400 dark:border-amber-400/20',
+    badgeClass: 'bg-[#FAF0E6] text-[#9E592B] border-[#F2E0D0] dark:bg-transparent dark:text-amber-400 dark:border-amber-400/20',
     headline: 'OpenAI Launches GPT-5 Preview with Native Multi-Agent Orchestration',
     summary: 'Features native agent coordination allowing developers to define complex hierarchies directly in API calls. Impact: Shifts UI frameworks toward agentic state systems.',
   },
   {
     category: 'FINANCE',
-    badgeClass: 'text-emerald-600 border-emerald-600/30 dark:text-emerald-400 dark:border-emerald-400/20',
+    badgeClass: 'bg-[#F0F5EE] text-[#4E7043] border-[#DCE8D5] dark:bg-transparent dark:text-emerald-400 dark:border-emerald-400/20',
     headline: 'Physical Intelligence Closes $400M Seed Round for Robot Control Software',
     summary: 'Bezos Expeditions and OpenAI back universal control models for physical movement. Valuation: $2.4B post-money.',
   },
   {
     category: 'RESEARCH',
-    badgeClass: 'text-slate-600 border-slate-600/30 dark:text-slate-400 dark:border-slate-400/20',
+    badgeClass: 'bg-[#F2F4F7] text-[#556688] border-[#E2E6EC] dark:bg-transparent dark:text-slate-400 dark:border-slate-400/20',
     headline: 'DeepMind Unveils AlphaFold 3: Modeling Protein-DNA Interactions',
     summary: "Predicts interactions of life's molecules (DNA, RNA, chemical compounds) in silico. Research: Speeds drug validation times by 80%.",
   },
   {
     category: 'MARKET',
-    badgeClass: 'text-purple-600 border-purple-600/30 dark:text-purple-400 dark:border-purple-400/20',
+    badgeClass: 'bg-[#F5F2F9] text-[#7855A8] border-[#EAE3F2] dark:bg-transparent dark:text-purple-400 dark:border-purple-400/20',
     headline: 'Anthropic Launches Artifacts API for Collaborative Canvas Sharing',
     summary: 'Allows software providers to embed shared canvas visual frames directly into enterprise messaging channels, boosting team editing productivity.',
   },
   {
     category: 'CAREERS',
-    badgeClass: 'text-rose-600 border-rose-600/30 dark:text-rose-400 dark:border-rose-400/20',
+    badgeClass: 'bg-[#F9F2F4] text-[#A85568] border-[#F2E3E7] dark:bg-transparent dark:text-rose-400 dark:border-rose-400/20',
     headline: 'Rust and GPU Optimization Skills Surge in Global AI Talent Market',
     summary: 'Data indicates a 140% year-over-year increase in job postings seeking low-level system design experts, overtaking high-level API integrations.',
   },

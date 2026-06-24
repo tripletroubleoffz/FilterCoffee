@@ -17,13 +17,13 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
-  --card: #f9fafb; /* gray-50 */
-  --card-hover: #f3f4f6; /* gray-100 */
-  --border: #e5e7eb; /* gray-200 */
-  --muted: #6b7280; /* gray-500 */
-  --muted-foreground: #4b5563; /* gray-600 */
+  --background: #FCFAF6;
+  --foreground: #23150C;
+  --card: #FFFDFB;
+  --card-hover: #FAF4E9;
+  --border: #EBE3D5;
+  --muted: #9E592B;
+  --muted-foreground: #5C5046;
 }
 
 /* Default Theme is Dark Mode */
