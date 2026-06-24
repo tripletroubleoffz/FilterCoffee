@@ -26,8 +26,7 @@
   --muted-foreground: #5C5046;
 }
 
-/* Default Theme is Dark Mode */
-:root:not(.light),
+/* Default Theme is Light Mode, Dark Mode uses .dark */
 .dark {
   --background: #0A0503;
   --foreground: #F5EFE3;
