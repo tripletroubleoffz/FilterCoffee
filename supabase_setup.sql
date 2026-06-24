@@ -99,7 +99,7 @@ create policy "Allow public read of profiles" on public.profiles
   for select using (true);
 
 create policy "Allow users to update own profile" on public.profiles
-  for update using (auth.uid() = id);
+  for update using ((select auth.uid()) = id);
 
 -- Articles RLS
 create policy "Allow public read of articles" on public.articles
@@ -107,23 +107,23 @@ create policy "Allow public read of articles" on public.articles
 
 -- Saved Articles RLS
 create policy "Allow users to view own saves" on public.saved_articles
-  for select using (auth.uid() = user_id);
+  for select using ((select auth.uid()) = user_id);
 
 create policy "Allow users to insert own saves" on public.saved_articles
-  for insert with check (auth.uid() = user_id);
+  for insert with check ((select auth.uid()) = user_id);
 
 create policy "Allow users to delete own saves" on public.saved_articles
-  for delete using (auth.uid() = user_id);
+  for delete using ((select auth.uid()) = user_id);
 
 -- Liked Articles RLS
 create policy "Allow users to view own likes" on public.liked_articles
   for select using (true);
 
 create policy "Allow users to insert own likes" on public.liked_articles
-  for insert with check (auth.uid() = user_id);
+  for insert with check ((select auth.uid()) = user_id);
 
 create policy "Allow users to delete own likes" on public.liked_articles
-  for delete using (auth.uid() = user_id);
+  for delete using ((select auth.uid()) = user_id);
 
 -- FAQs RLS
 create policy "Allow public read of FAQs" on public.faqs
