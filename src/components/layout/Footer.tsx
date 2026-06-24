@@ -51,10 +51,10 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
-          <span className="text-xs text-muted">
+          <span className="text-xs footer-text">
             &copy; {new Date().getFullYear()} FilterCoffee. All rights reserved.
           </span>
-          <span className="text-xs text-muted">
+          <span className="text-xs footer-text">
             Developed by TRIPLETROUBLEOFFICIALS
           </span>
         </div>
